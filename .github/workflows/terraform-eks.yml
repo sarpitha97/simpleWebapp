@@ -8,25 +8,25 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: terraform 
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Setup Terraform
+    - name: Install Terraform CLI
       uses: hashicorp/setup-terraform@v3
 
     - name: Terraform Init
-      working-directory: terraform
       run: terraform init
 
     - name: Terraform Plan
-      working-directory: terraform
       run: terraform plan
 
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/main'
-      working-directory: terraform
+      if: github.ref == 'refs/heads/main' # it makes sure infrastructure change only if it run from main branch
       run: terraform apply -auto-approve
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
